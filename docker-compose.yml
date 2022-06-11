@@ -1,0 +1,13 @@
+services:
+  songrequesttracker-api:
+    build: ./api
+    container_name: songrequesttracker-api
+    ports:
+      - "8066:8080"
+  songrequesttracker-bot:
+    build:
+      ./bot
+    environment:
+      - USERNAME="thewhitefallen"
+      - TOKEN="vd1vvlmq7bbdy7jtqa3axyu0pfud1m"
+    container_name: songrequesttracker-bot

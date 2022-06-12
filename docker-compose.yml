@@ -8,6 +8,6 @@ services:
     build:
       ./bot
     environment:
-      - USERNAME="${USERNAME}"
-      - TOKEN="${TOKEN}"
+      - USERNAME=${USERNAME}
+      - TOKEN=${TOKEN}
     container_name: songrequesttracker-bot

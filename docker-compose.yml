@@ -4,10 +4,13 @@ services:
     container_name: songrequesttracker-api
     ports:
       - "8066:8080"
+    volumes:
+      - ./api/data:/api/data
   songrequesttracker-bot:
     build:
       ./bot
     environment:
       - USERNAME=${USERNAME}
       - TOKEN=${TOKEN}
+      - CHANNEL=${CHANNEL}
     container_name: songrequesttracker-bot

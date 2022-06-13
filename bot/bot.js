@@ -1,16 +1,20 @@
 const tmi = require('tmi.js');
-const request = require('request');
+const axios = require("axios").default;
 
 // Define configuration options
+
 const opts = {
   identity: {
     username: process.env.USERNAME,
     password: process.env.TOKEN
   },
   channels: [
-    'thewhitefallen'
+    process.env.CHANNEL
   ]
 };
+
+const beatsaverAPI = "https://api.beatsaver.com/maps/id";
+const backendAPI = "http://songrequesttracker-api:8080/api/songs";
 
 // Create a client with our options
 const client = new tmi.client(opts);
@@ -30,10 +34,12 @@ function onMessageHandler (target, context, msg, self) {
   const msgArr = msg.split(' ');
   const commandName = msgArr[0];
   const commandArgs = msgArr[1];
+  // Get username
+  const sender = context.username;
 
   // If the command is known, let's execute it
   if (commandName === '!bsr') {
-    saveRequest(commandArgs);
+    saveRequest(commandArgs, sender);
     console.log(`* Executed ${commandName} command`);
   } else {
     console.log(`* Unknown command ${commandName}`);
@@ -41,13 +47,32 @@ function onMessageHandler (target, context, msg, self) {
 }
 
 // Function called when the "dice" command is issued
-function saveRequest (msg) {
-  console.log(msg)
-  request(`https://api.beatsaver.com/maps/id/${msg}`, {json: true}, (err, res, body) => {
-    if(err) {return console.log(err)}
-    if(body.error) { return console.log(body.error)}
-    console.log("test")
-  })
+async function saveRequest (msg, username) {
+  let song = await getSongInfo(msg);
+  if(song !== null) {
+    song.requestedBy = username;
+    //save to spring api
+    let data = await sendSong(song);
+    console.log(data.data);
+  }
+}
+
+async function sendSong(song) {
+  try {
+    let data = await axios.post(backendAPI, song);
+    return data;
+  } catch(error) {
+    return null;
+  };
+}
+
+async function getSongInfo(msg) {
+  try {
+    let response = await axios.get(`${beatsaverAPI}/${msg}`);
+    return {bsrId: response.data.id, songName: response.data.name}
+  } catch(error) {
+    return null;
+  }
 }
 
 // Called every time the bot connects to Twitch chat

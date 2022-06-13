@@ -6,6 +6,8 @@ services:
       - "8066:8080"
     volumes:
       - ./api/data:/api/data
+    networks:
+      - backend
   songrequesttracker-bot:
     build:
       ./bot
@@ -14,3 +16,11 @@ services:
       - TOKEN=${TOKEN}
       - CHANNEL=${CHANNEL}
     container_name: songrequesttracker-bot
+    depends_on:
+      - "songrequesttracker-api"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

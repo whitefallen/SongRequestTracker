@@ -2,7 +2,6 @@ const tmi = require('tmi.js');
 const axios = require("axios").default;
 
 // Define configuration options
-
 const opts = {
   identity: {
     username: process.env.USERNAME,
@@ -13,6 +12,7 @@ const opts = {
   ]
 };
 
+// API URLs
 const beatsaverAPI = "https://api.beatsaver.com/maps/id";
 const backendAPI = "http://songrequesttracker-api:8080/api/songs";
 
@@ -32,13 +32,16 @@ function onMessageHandler (target, context, msg, self) {
 
   // Remove whitespace from chat message
   const msgArr = msg.split(' ');
+  // Command name [!bsr] args
   const commandName = msgArr[0];
+  // Command Args !bsr [args]
   const commandArgs = msgArr[1];
   // Get username
   const sender = context.username;
 
   // If the command is known, let's execute it
   if (commandName === '!bsr') {
+    // save SongRequest
     saveRequest(commandArgs, sender);
     console.log(`* Executed ${commandName} command`);
   } else {
@@ -46,17 +49,21 @@ function onMessageHandler (target, context, msg, self) {
   }
 }
 
-// Function called when the "dice" command is issued
+// Function called when the "bsr" command is issued
 async function saveRequest (msg, username) {
+  // Get info about the requested song
   let song = await getSongInfo(msg);
+  // if it exist save it
   if(song !== null) {
+    // add requester
     song.requestedBy = username;
     //save to spring api
-    let data = await sendSong(song);
-    console.log(data.data);
+    let response = await sendSong(song);
+    console.log(response.data);
   }
 }
 
+// Send song to Backend
 async function sendSong(song) {
   try {
     let data = await axios.post(backendAPI, song);
@@ -66,6 +73,7 @@ async function sendSong(song) {
   };
 }
 
+// Get song info from the requested id
 async function getSongInfo(msg) {
   try {
     let response = await axios.get(`${beatsaverAPI}/${msg}`);

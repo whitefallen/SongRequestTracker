@@ -3,8 +3,10 @@ package de.whitefallen.songrequesttracker.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="song")
 public class Song {
   @Id
   @GeneratedValue
@@ -12,13 +14,15 @@ public class Song {
   private String bsrId;
   private String songName;
   private String requestedBy;
+  private String channel;
 
   public Song() { }
 
-  public Song(String bsrId, String songName, String requestedBy) {
+  public Song(String bsrId, String songName, String requestedBy, String channel) {
     this.bsrId = bsrId;
     this.songName = songName;
     this.requestedBy = requestedBy;
+    this.channel = channel;
   }
 
   public Long getId() {
@@ -48,4 +52,13 @@ public class Song {
   public void setRequestedBy(String requestedBy) {
     this.requestedBy = requestedBy;
   }
+
+  public String getChannel() {
+    return this.channel;
+  }
+
+  public void setChannel(String channel) {
+    this.channel = channel;
+  }
+  
 }

@@ -44,6 +44,7 @@ public class SongController {
               song.setSongName(newSong.getSongName());
               song.setBsrId(newSong.getBsrId());
               song.setRequestedBy(newSong.getRequestedBy());
+              song.setChannel(newSong.getChannel());
               return repository.save(song);
             })
             .orElseGet(() -> {

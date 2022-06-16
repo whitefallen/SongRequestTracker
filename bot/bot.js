@@ -1,15 +1,16 @@
 const tmi = require('tmi.js');
 const axios = require("axios").default;
 
+// Prepare Channels List
+const channels = process.env.CHANNELS.split(',');
+
 // Define configuration options
 const opts = {
   identity: {
     username: process.env.USERNAME,
     password: process.env.TOKEN
   },
-  channels: [
-    process.env.CHANNEL
-  ]
+  channels: channels
 };
 
 // API URLs
@@ -38,11 +39,14 @@ function onMessageHandler (target, context, msg, self) {
   const commandArgs = msgArr[1];
   // Get username
   const sender = context.username;
+  // Get Channel the command was issued
+  const channel = target.substring(1, target.length);
 
   // If the command is known, let's execute it
   if (commandName === '!bsr') {
     // save SongRequest
-    saveRequest(commandArgs, sender);
+    saveRequest(commandArgs, sender, channel);
+
     console.log(`* Executed ${commandName} command`);
   } else {
     console.log(`* Unknown command ${commandName}`);
@@ -50,13 +54,14 @@ function onMessageHandler (target, context, msg, self) {
 }
 
 // Function called when the "bsr" command is issued
-async function saveRequest (msg, username) {
+async function saveRequest (msg, username, channel) {
   // Get info about the requested song
   let song = await getSongInfo(msg);
   // if it exist save it
   if(song !== null) {
     // add requester
     song.requestedBy = username;
+    song.channel = channel;
     //save to spring api
     let response = await sendSong(song);
     console.log(response.data);

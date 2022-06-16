@@ -10,7 +10,7 @@ services:
     volumes:
       - ./api/data:/api/data
     networks:
-      - backend
+      - app
   songrequesttracker-bot:
     build:
       ./bot
@@ -22,8 +22,14 @@ services:
     depends_on:
       - "songrequesttracker-api"
     networks:
-      - backend
-
+      - app
+  songrequesttracker-frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT}:80"
+    container_name: songrequesttracker-frontend
+    networks:
+      - app
 networks:
-  backend:
+  app:
     driver: bridge

@@ -1,6 +1,5 @@
 const tmi = require('tmi.js');
 const axios = require("axios").default;
-
 // Prepare Channels List
 const channels = process.env.CHANNELS.split(',');
 
@@ -15,7 +14,7 @@ const opts = {
 
 // API URLs
 const beatsaverAPI = "https://api.beatsaver.com/maps/id";
-const backendAPI = "http://songrequesttracker-api:8080/api/songs";
+const backendAPI = "http://songrequesttracker-api:9000/api/songs";
 
 // Create a client with our options
 const client = new tmi.client(opts);
@@ -64,7 +63,9 @@ async function saveRequest (msg, username, channel) {
     song.channel = channel;
     //save to spring api
     let response = await sendSong(song);
-    console.log(response.data);
+    if(response !== null) {
+      console.log(response.data);
+    }
   }
 }
 
@@ -74,6 +75,7 @@ async function sendSong(song) {
     let data = await axios.post(backendAPI, song);
     return data;
   } catch(error) {
+    console.log(error);
     return null;
   };
 }

@@ -1,8 +1,8 @@
 version: "3"
 services:
   songrequesttracker-api:
-    mem_limit: 120m
-    mem_reservation: 60m
+    mem_limit: 180m
+    mem_reservation: 120m
     cpus: 0.25
     build: ./api
     container_name: songrequesttracker-api

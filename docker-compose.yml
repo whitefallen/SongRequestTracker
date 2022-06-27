@@ -1,11 +1,15 @@
 version: "3"
 services:
   songrequesttracker-api:
+    mem_limit: 120m
+    mem_reservation: 60m
+    cpus: 0.25
     build: ./api
     container_name: songrequesttracker-api
     environment:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      - JAVA_OPTS=-Xmx150m -Xms75m
     ports:
       - "9000:9000"
     volumes:
@@ -13,6 +17,9 @@ services:
     networks:
       - songrequesttracker
   songrequesttracker-bot:
+    mem_limit: 120m
+    mem_reservation: 60m
+    cpus: 0.15
     build:
       ./bot
     environment:
@@ -25,6 +32,9 @@ services:
     networks:
       - songrequesttracker
   songrequesttracker-frontend:
+    mem_limit: 60m
+    mem_reservation: 30m
+    cpus: 0.10
     build:
       context: ./frontend
       args:
